@@ -1,0 +1,31 @@
+<section>
+  <div>
+    <h2>Employee Dashboard</h2>
+    <p>{{message}}</p>
+
+    <button ng-click="loadEmployees()">Load Employees</button>
+    <p ng-if="loading">Loading...</p>
+  </div>
+
+  <div>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Employee Code</th>
+          <th>Employee Name</th>
+          <th>Designation</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="employee in employees">
+          <td>{{employee.employeeCode}}</td>
+          <td>{{employee.employeeName}}</td>
+          <td>{{employee.designation}}</td>
+          <td>{{employee.salary}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,0 +1,101 @@
+<section>
+  <div>
+    <h2>Add New Employee</h2>
+    <p>{{message}}</p>
+  </div>
+
+  <div>
+    <form ng-submit="addEmployee()">
+      <div>
+        <label for="employeeCode">Employee Code:</label>
+        <input
+          type="text"
+          id="employeeCode"
+          ng-model="employee.employeeCode"
+          readonly
+        />
+      </div>
+
+      <div>
+        <label for="employeeName">Employee Name:</label>
+        <input
+          type="text"
+          id="employeeName"
+          ng-model="employee.employeeName"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="dateofBirth">DateofBirth:</label>
+        <input
+          type="date"
+          id="dateofBirth"
+          ng-model="employee.dateofBirth"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="joiningDate">Joining Date:</label>
+        <input type="date" id="joiningDate" ng-model="employee.joiningDate" />
+      </div>
+
+      <div>
+        <label for="mobileNumber">Mobile Number:</label>
+        <input
+          type="text"
+          id="mobileNumber"
+          ng-model="employee.mobileNumber"
+          required
+        />
+      </div>
+
+      <div>
+        <label for="address">Address:</label>
+        <input type="text" id="address" ng-model="employee.address" />
+      </div>
+
+      <div>
+        <label for="division">Division:</label>
+        <select id="division" ng-model="employee.division">
+          <option value="">Select Division</option>
+          <option value="Dhaka">Dhaka</option>
+          <option value="Chittagong">Chittagong</option>
+          <option value="Khulna">Khulna</option>
+          <option value="Rajshahi">Rajshahi</option>
+          <option value="Barisal">Barisal</option>
+          <option value="Sylhet">Sylhet</option>
+          <option value="Rangpur">Rangpur</option>
+          <option value="Mymensingh">Mymensingh</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="district">District:</label>
+        <select id="district" ng-model="employee.district">
+          <option value="">Select District</option>
+          <option value="Dhaka">Dhaka</option>
+          <option value="Gazipur">Gazipur</option>
+          <option value="Narayanganj">Narayanganj</option>
+          <option value="Tangail">Tangail</option>
+          <option value="Kishoreganj">Kishoreganj</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="religion">Religion:</label>
+        <select id="religion" ng-model="employee.religion">
+          <option value="">Select Religion</option>
+          <option value="Islam">Islam</option>
+          <option value="Hinduism">Hinduism</option>
+          <option value="Buddhism">Buddhism</option>
+          <option value="Christianity">Christianity</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <button type="submit">Add Employee</button>
+    </form>
+  </div>
+</section>
