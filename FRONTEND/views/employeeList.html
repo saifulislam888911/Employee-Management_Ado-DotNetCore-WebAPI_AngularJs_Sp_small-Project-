@@ -1,15 +1,84 @@
 <section>
   <div>
+    <a class="add-new-btn" href="#!/addEmployee">Add New Employee</a>
+  </div>
+
+  <div>
+    <h2>Filter Employees</h2>
+
+    <form ng-submit="applyFilter()" class="filter-form">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" ng-model="filters.name" />
+        </div>
+
+        <div class="filter-group">
+          <label for="designation">Designation:</label>
+          <select
+            id="designation"
+            ng-model="filters.designation"
+            ng-options="item for item in designations"
+          >
+            <option value="">-- Select Designation --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="fromDate">From Date:</label>
+          <input type="date" id="fromDate" ng-model="filters.fromDate" />
+        </div>
+
+        <div class="filter-group">
+          <label for="toDate">To Date:</label>
+          <input type="date" id="toDate" ng-model="filters.toDate" />
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="salary">Salary:</label>
+          <input type="number" id="salary" ng-model="filters.salary" />
+        </div>
+
+        <div class="filter-group">
+          <label for="minSalary">Min Salary:</label>
+          <input type="number" id="minSalary" ng-model="filters.minSalary" />
+        </div>
+
+        <div class="filter-group">
+          <label for="maxSalary">Max Salary:</label>
+          <input type="number" id="maxSalary" ng-model="filters.maxSalary" />
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button type="submit" class="btn btn-primary">Apply Filter</button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          ng-click="resetFilter()"
+        >
+          Reset
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div>
     <h2>Employee List</h2>
 
-    <p>{{message}}</p>
+    <button class="btn btn-secondary" ng-click="loadEmployees()">
+      Reload Employees
+    </button>
 
-    <button ng-click="loadEmployees()">Load Employees</button>
     <p ng-if="loading">Loading...</p>
   </div>
 
   <div>
-    <table border="1">
+    <table border="1" cellpadding="8" cellspacing="0">
       <thead>
         <tr>
           <th>Employee Code</th>
@@ -18,9 +87,7 @@
           <th>Joining Date</th>
           <th>Mobile Number</th>
           <th>Salary</th>
-
-          <th></th>
-          <th></th>
+          <th>Actions</th>
         </tr>
       </thead>
 
@@ -33,8 +100,24 @@
           <td>{{employee.mobileNumber}}</td>
           <td>{{employee.salary}}</td>
 
-          <td><button ng-click="editEmployee(employee)">Edit</button></td>
-          <td><button ng-click="deleteEmployee(employee)">Delete</button></td>
+          <td>
+            <div class="action-buttons">
+              <a
+                class="btn btn-secondary"
+                href="#!/editEmployee/{{employee.employeeCode}}"
+              >
+                Edit
+              </a>
+
+              <button
+                type="button"
+                class="btn btn-danger"
+                ng-click="deleteEmployee(employee.employeeCode)"
+              >
+                Delete
+              </button>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>

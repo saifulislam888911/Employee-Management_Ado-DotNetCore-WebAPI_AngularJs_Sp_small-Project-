@@ -17,8 +17,6 @@ namespace EmployeeManagement.API.Repositories
 
 
 
-
-
         public async Task<Employee> AddEmployeeAsync(Employee employee)
         {
             using SqlConnection connection = _dbConnectionFactory.CreateConnection();
@@ -40,8 +38,6 @@ namespace EmployeeManagement.API.Repositories
             throw new InvalidOperationException("Unsuccessful : Failed to Add Employee.");
         }
 
-
-
         public async Task<List<Employee>> GetAllEmployeesAsync()
         {
             List<Employee> employees = new List<Employee>();
@@ -55,7 +51,7 @@ namespace EmployeeManagement.API.Repositories
 
             using SqlDataReader reader = await command.ExecuteReaderAsync();
 
-            while(await reader.ReadAsync())
+            while (await reader.ReadAsync())
             {
                 employees.Add(MapEmployee(reader));
             }
@@ -63,8 +59,106 @@ namespace EmployeeManagement.API.Repositories
             return employees;
         }
 
+        public async Task<Employee?> GetEmployeeByCodeAsync(int employeeCode)
+        {
+            using SqlConnection connection = _dbConnectionFactory.CreateConnection();
+            using SqlCommand command = new SqlCommand("dbo.sp_GetEmployeeByCode", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("@EmployeeCode", SqlDbType.Int).Value = employeeCode;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync()) 
+            {
+                return MapEmployee(reader);
+            }
+
+            return null;
+        }
+
+        public async Task<Employee?> UpdateEmployeeAsync(int employeeCode, Employee employee)
+        {
+            using SqlConnection connection = _dbConnectionFactory.CreateConnection();
+            using SqlCommand command = new SqlCommand("dbo.sp_UpdateEmployee", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("@EmployeeCode", SqlDbType.Int).Value = employeeCode;
+
+            AddEmployeeParameters(command, employee);
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return MapEmployee(reader);
+            }
+
+            return null;
+        }
+
+        public async Task<bool> DeleteEmployeeAsync(int employeeCode)
+        {
+            Employee? existingEmployee = await GetEmployeeByCodeAsync(employeeCode);
+
+            if (existingEmployee == null)
+            {
+                return false;
+            }
+
+            using SqlConnection connection = _dbConnectionFactory.CreateConnection();
+            using SqlCommand command = new SqlCommand("dbo.sp_DeleteEmployee", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add("@EmployeeCode", SqlDbType.Int).Value = employeeCode;
+
+            await connection.OpenAsync();
+
+            await command.ExecuteReaderAsync();
+
+            return true;
+        }
 
 
+
+        public async Task<List<Employee>> FilterEmployeesAsync(
+            string? name,
+            string? designation,
+            DateTime? fromDate,
+            DateTime? toDate,
+            decimal? salary,
+            decimal? minSalary,
+            decimal? maxSalary
+        )
+        {
+            List<Employee> employees = new List<Employee>();
+
+            using SqlConnection connection = _dbConnectionFactory.CreateConnection();
+            using SqlCommand command = new SqlCommand("dbo.sp_FilterEmployees", connection);
+            
+            command.CommandType = CommandType.StoredProcedure;
+
+            AddFilterEmployeesParameters(command, name, designation, fromDate, toDate, salary, minSalary, maxSalary);
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                employees.Add(MapEmployee(reader));
+            }
+
+            return employees;
+        }
+        
 
 
         private static void AddEmployeeParameters(SqlCommand command, Employee employee)
@@ -84,6 +178,39 @@ namespace EmployeeManagement.API.Repositories
             salaryParam.Scale = 2;
             salaryParam.Value = employee.Salary;
         }
+
+        private static void AddFilterEmployeesParameters(
+            SqlCommand command,
+            string? name,
+            string? designation,
+            DateTime? fromDate,
+            DateTime? toDate,
+            decimal? salary,
+            decimal? minSalary,
+            decimal? maxSalary)
+        {
+            command.Parameters.Add("@Name", SqlDbType.NVarChar, 150).Value = (object?)name ?? DBNull.Value;
+            command.Parameters.Add("@Designation", SqlDbType.NVarChar, 100).Value = (object?)designation ?? DBNull.Value;
+            command.Parameters.Add("@FromDate", SqlDbType.Date).Value = (object?)fromDate ?? DBNull.Value;
+            command.Parameters.Add("@ToDate", SqlDbType.Date).Value = (object?)toDate ?? DBNull.Value;
+
+            var salaryParam = command.Parameters.Add("@Salary", SqlDbType.Decimal);
+            salaryParam.Precision = 18;
+            salaryParam.Scale = 2;
+            salaryParam.Value = (object?)salary ?? DBNull.Value;
+
+            var minSalaryParam = command.Parameters.Add("@MinSalary", SqlDbType.Decimal);
+            minSalaryParam.Precision = 18;
+            minSalaryParam.Scale = 2;
+            minSalaryParam.Value = (object?)minSalary ?? DBNull.Value;
+
+            var maxSalaryParam = command.Parameters.Add("@MaxSalary", SqlDbType.Decimal);
+            maxSalaryParam.Precision = 18;
+            maxSalaryParam.Scale = 2;
+            maxSalaryParam.Value = (object?)maxSalary ?? DBNull.Value;
+        }
+
+
 
         private static Employee MapEmployee(SqlDataReader reader)
         {

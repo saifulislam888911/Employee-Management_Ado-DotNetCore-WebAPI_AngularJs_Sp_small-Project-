@@ -13,10 +13,13 @@
 
     <script src="./js/app.js"></script>
     <script src="./js/services/employeeService.js"></script>
+    <script src="./js/services/viewModalService.js"></script>
 
     <script src="./js/controllers/dashboardController.js"></script>
     <script src="./js/controllers/addEmployeeController.js"></script>
     <script src="./js/controllers/employeeListController.js"></script>
+    <script src="./js/controllers/editEmployeeController.js"></script>
+    <script src="./js/controllers/viewModalController.js"></script>
   </head>
 
   <body>
@@ -36,8 +39,8 @@
 
     <main>
       <section class="container">
-        <div>
-          <a class="add-new-btn" href="#!/addEmployee">Add New Employee</a>
+        <div ng-controller="viewModalController">
+          <div ng-include="'views/modals/viewModal.html'"></div>
         </div>
 
         <div ng-view></div>

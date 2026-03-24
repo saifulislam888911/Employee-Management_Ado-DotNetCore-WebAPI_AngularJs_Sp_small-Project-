@@ -1,9 +1,13 @@
 <section>
   <div>
-    <h2>Employee Dashboard</h2>
-    <p>{{message}}</p>
+    <a class="add-new-btn" href="#!/addEmployee">Add New Employee</a>
+  </div>
 
-    <button ng-click="loadEmployees()">Load Employees</button>
+  <div>
+    <h2>Employee Dashboard</h2>
+
+    <button ng-click="loadEmployees()">Reload Employees</button>
+
     <p ng-if="loading">Loading...</p>
   </div>
 
@@ -15,6 +19,7 @@
           <th>Employee Name</th>
           <th>Designation</th>
           <th>Salary</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
@@ -24,6 +29,15 @@
           <td>{{employee.employeeName}}</td>
           <td>{{employee.designation}}</td>
           <td>{{employee.salary}}</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-primary"
+              ng-click="viewEmployeeByCode(employee.employeeCode)"
+            >
+              View
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>

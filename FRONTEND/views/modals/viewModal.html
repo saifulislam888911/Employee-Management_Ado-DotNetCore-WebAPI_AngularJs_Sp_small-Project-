@@ -1,0 +1,71 @@
+<div class="custom-modal" ng-show="viewModalState.isOpen">
+  <div class="custom-modal-content">
+    <h3>{{ viewModalState.title }}</h3>
+
+    <div>
+      <label for="employeeDropdown">Employee:</label>
+      <!-- ng-if="viewModalState.mode === 'assign'" -->
+      <select
+        id="employeeDropdown"
+        ng-model="viewModalState.employeeCode"
+        ng-options="emp.employeeCode as (emp.employeeCode + ' : ' + emp.employeeName) for emp in viewModalState.employeeDropdown"
+        ng-change="onEmployeeViewModal()"
+      >
+        <option value="">Select Employee</option>
+      </select>
+
+      <!-- <input
+        ng-if="viewModalState.mode === 'view'"
+        type="text"
+        ng-value="viewModalState.employee.employeeCode + ' : ' + viewModalState.employee.employeeName"
+        readonly
+      /> -->
+    </div>
+
+    <div>
+      <label for="designation">Designation:</label>
+      <!-- ng-disabled="viewModalState.mode === 'view'" -->
+      <select
+        id="designation"
+        ng-model="viewModalState.employee.designation"
+        ng-options="item for item in designations"
+      >
+        <option value="">-- Select Designation --</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="salary">Salary:</label>
+      <!-- ng-readonly="viewModalState.mode === 'view'" -->
+      <input
+        type="number"
+        id="salary"
+        ng-model="viewModalState.employee.salary"
+      />
+    </div>
+
+    <div class="modalButtonsSection action-buttons">
+      <!-- ng-if="viewModalState.mode === 'assign'" -->
+      <button
+        type="button"
+        class="btn btn-success"
+        ng-click="updateEmployeeViewModal()"
+      >
+        Save
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        ng-if="viewModalState.mode === 'view'"
+        ng-click="editEmployeeViewModal()"
+      >
+        Edit
+      </button>
+
+      <button type="button" class="btn btn-secondary" ng-click="closeModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

@@ -18,18 +18,14 @@ namespace EmployeeManagement.API.Services
 
 
 
-
-
-        public async Task<EmployeeResponseDto> AddEmployeeAsync(AddEmployeeRequestDto request)
+        public async Task<EmployeeResponseDto> AddEmployeeAsync(AddEmployeeRequestDto addRequest)
         {
-            Employee employee = MapToEmployee(request);
+            Employee employee = MapToEmployee(addRequest);
 
             Employee addedEmployee = await _employeeRepository.AddEmployeeAsync(employee);
 
             return MapToResponseDto(addedEmployee);
         }
-
-
 
         public async Task<List<EmployeeResponseDto>> GetAllEmployeesAsync()
         {
@@ -38,24 +34,77 @@ namespace EmployeeManagement.API.Services
             return employees.Select(MapToResponseDto).ToList();
         }
 
+        public async Task<EmployeeResponseDto?> GetEmployeeByCodeAsync(int employeeCode)
+        {
+            Employee? employee = await _employeeRepository.GetEmployeeByCodeAsync(employeeCode);
+
+            if (employee == null)
+            {
+                return null;
+            }
+            
+            return MapToResponseDto(employee);
+        }
+
+        public async Task<EmployeeResponseDto?> UpdateEmployeeAsync(int employeeCode, UpdateEmployeeRequestDto updateRequest)
+        {
+            Employee? existingEmployee = await _employeeRepository.GetEmployeeByCodeAsync(employeeCode);
+
+            if (existingEmployee == null)
+            {
+                return null;
+            }
+
+            Employee mergedEmployee = MergeEmployeeForUpdate(existingEmployee, updateRequest);
+
+            Employee? updatedEmployee = await _employeeRepository.UpdateEmployeeAsync(employeeCode, mergedEmployee);
+
+            if (updatedEmployee == null) 
+            {
+                return null;
+            }
+
+            return MapToResponseDto(updatedEmployee);
+        }   
+
+        public async Task<bool> DeleteEmployeeAsync(int employeeCode)
+        {
+            return await _employeeRepository.DeleteEmployeeAsync(employeeCode);
+        }
 
 
 
+        public async Task<List<EmployeeResponseDto>> FilterEmployeesAsync(FilterEmployeeRequestDto filterRequest)
+        {
+            List<Employee> employees = await _employeeRepository.FilterEmployeesAsync(
+                filterRequest.Name,
+                filterRequest.Designation,
+                filterRequest.FromDate,
+                filterRequest.ToDate,
+                filterRequest.Salary,
+                filterRequest.MinSalary,
+                filterRequest.MaxSalary
+            );
+            
+            return employees.Select(MapToResponseDto).ToList();
+        }
 
-        private static Employee MapToEmployee(AddEmployeeRequestDto request)
+
+
+        private static Employee MapToEmployee(AddEmployeeRequestDto addRequest)
         {
             return new Employee
             {
-                EmployeeName = request.EmployeeName,
-                DateOfBirth = request.DateOfBirth,
-                JoiningDate = request.JoiningDate,
-                MobileNumber = request.MobileNumber,
-                Address = request.Address,
-                Division = request.Division,
-                District = request.District,
-                Religion = request.Religion,
-                Designation = request.Designation,
-                Salary = request.Salary
+                EmployeeName = addRequest.EmployeeName,
+                DateOfBirth = addRequest.DateOfBirth,
+                JoiningDate = addRequest.JoiningDate,
+                MobileNumber = addRequest.MobileNumber,
+                Address = addRequest.Address,
+                Division = addRequest.Division,
+                District = addRequest.District,
+                Religion = addRequest.Religion,
+                Designation = addRequest.Designation,
+                Salary = addRequest.Salary
             };
         }
 
@@ -78,5 +127,29 @@ namespace EmployeeManagement.API.Services
                 CreatedBy = employee.CreatedBy
             };
         }
+
+
+
+        private static Employee MergeEmployeeForUpdate(Employee existingEmployee, UpdateEmployeeRequestDto updateRequest)
+        {
+            return new Employee
+            {
+                EmployeeCode = existingEmployee.EmployeeCode,
+
+                EmployeeName = updateRequest.EmployeeName ?? existingEmployee.EmployeeName,
+                DateOfBirth = updateRequest.DateOfBirth ?? existingEmployee.DateOfBirth,
+                JoiningDate = updateRequest.JoiningDate ?? existingEmployee.JoiningDate,
+                MobileNumber = updateRequest.MobileNumber ?? existingEmployee.MobileNumber,
+                Address = updateRequest.Address ?? existingEmployee.Address,
+                Division = updateRequest.Division ?? existingEmployee.Division,
+                District = updateRequest.District ?? existingEmployee.District,
+                Religion = updateRequest.Religion ?? existingEmployee.Religion,
+                Designation = updateRequest.Designation ?? existingEmployee.Designation,
+                Salary = updateRequest.Salary ?? existingEmployee.Salary,
+
+                CreatedAt = existingEmployee.CreatedAt,
+                CreatedBy = existingEmployee.CreatedBy
+            };
+        }       
     }
 }
